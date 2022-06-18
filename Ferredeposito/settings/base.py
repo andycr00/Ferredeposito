@@ -24,7 +24,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Local APPS
-    'applications.ventas'
+    'applications.ventas',
+    'applications.compras',
+    'applications.productos',
+    'applications.administracion',
 ]
 
 MIDDLEWARE = [
