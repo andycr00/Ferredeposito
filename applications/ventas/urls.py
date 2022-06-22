@@ -1,8 +1,6 @@
 from django.urls import path
-
-def desdeapps(self):
-    print('PRUEBASASASDASDASD')
+from . import views
 
 urlpatterns = [
-    path('ventas/', desdeapps),
+    path('ventas/', views.Prueba.as_view()),
 ]
