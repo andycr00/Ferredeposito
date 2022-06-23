@@ -12,4 +12,4 @@ class Usuario(models.Model):
     actualizado_en = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
-        return self.nombre
+        return self.nombres + ' ' +self.apellidos

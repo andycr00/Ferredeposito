@@ -10,5 +10,9 @@ class Proveedor(models.Model):
     creado_en = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     actualizado_en = models.DateTimeField(auto_now=True, null=True, blank=True)
 
+    class Meta:
+        verbose_name = 'Proveedor'
+        verbose_name_plural = 'Proveedores'
+
     def __str__(self):
         return self.nombre

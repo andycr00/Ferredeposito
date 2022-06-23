@@ -11,4 +11,4 @@ class Deuda(models.Model):
     actualizado_en = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
-        return self.compra
+        return self.id
