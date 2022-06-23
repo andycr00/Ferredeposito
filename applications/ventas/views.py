@@ -6,5 +6,7 @@ class Prueba(TemplateView):
 
 
 class PruebaList(ListView):
-    model = MODEL_NAME
-    template_name: "str"
+    template_name = "ventas/lista.html"
+    context_object_name = 'listaNumeros'
+    queryset = ['1', '10', '20', '30']
+    
