@@ -1,8 +1,6 @@
 from django.db import models
 from .deudas import Deuda
 
-from applications.compras.models.compras import PAYMENT_CHOICES
-
 PAYMENT_CHOICES = (
     ("ABONO", "Abono"),
     ("CANCELACION", "Cancelacion"),

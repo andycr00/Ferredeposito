@@ -1,9 +1,8 @@
 from django.db import models
-# from ...ventas.models import Venta
-# import applications.ventas.models as V
+from .ventas import Venta
 
 class Cobro(models.Model):
-    # venta = models.ForeignKey(Venta, on_delete=models.DO_NOTHING)
+    venta = models.ForeignKey(Venta, on_delete=models.DO_NOTHING)
     descripcion = models.CharField(max_length=300)
     fecha_pago = models.DateTimeField(null=True, blank=True)
     valor = models.FloatField(null=True, blank=True)

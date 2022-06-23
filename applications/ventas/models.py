@@ -1,3 +1,3 @@
-from .modelos import *
+from .models import *
 
 # Create your models here.
