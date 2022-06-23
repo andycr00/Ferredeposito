@@ -39,10 +39,6 @@ class Producto(models.Model):
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
 
-        # if self.name != self.__original_name:
-        #     # name changed - do something here
-
-
         # Si el registro no existe
         if self.pk is None:
             # Y si el registro cuenta con costo y precio venta, pero no con la utilidad
