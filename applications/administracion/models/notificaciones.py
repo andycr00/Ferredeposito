@@ -7,5 +7,9 @@ class Notificacion(models.Model):
     creado_en = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     actualizado_en = models.DateTimeField(auto_now=True, null=True, blank=True)
 
+    class Meta:
+        verbose_name = 'Notificacion'
+        verbose_name_plural = 'Notificaciones'
+
     def __str__(self):
         return self.titulo

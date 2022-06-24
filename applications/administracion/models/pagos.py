@@ -7,7 +7,7 @@ PAYMENT_CHOICES = (
 )
 
 class Pago(models.Model):
-    deuda = models.ForeignKey(Deuda, on_delete=models.DO_NOTHING)
+    deuda = models.ForeignKey(Deuda, on_delete=models.DO_NOTHING, verbose_name='Cuenta por pagar')
     titulo = models.CharField(max_length=200, null=True, blank=True)
     descripcion = models.CharField(max_length=200, null=True, blank=True)
     fecha = models.DateTimeField(null=True, blank=True)

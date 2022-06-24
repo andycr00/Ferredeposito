@@ -19,5 +19,9 @@ class ProductoCompra(models.Model):
     creado_en = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     actualizado_en = models.DateTimeField(auto_now=True, null=True, blank=True)
 
+    class Meta:
+        verbose_name = 'Producto Compra'
+        verbose_name_plural = 'Productos Compras'
+
     def __str__(self):
         return self.producto

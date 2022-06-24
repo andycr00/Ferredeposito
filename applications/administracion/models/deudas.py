@@ -10,5 +10,9 @@ class Deuda(models.Model):
     creado_en = models.DateTimeField(auto_now_add=True, null=True, blank=True, editable=False)
     actualizado_en = models.DateTimeField(auto_now=True, null=True, blank=True)
 
+    class Meta:
+        verbose_name = 'Cuenta por pagar'
+        verbose_name_plural = 'Cuentas por pagar'
+
     def __str__(self):
-        return self.id
+        return str(self.pk)
