@@ -6,7 +6,7 @@ class Deuda(models.Model):
     saldo = models.FloatField(null=True, blank=True)
     fecha_inicio = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     fecha_fin = models.DateTimeField(null=True, blank=True)
-    estado = models.BooleanField(null=True, default=True)
+    estado = models.BooleanField(default=True)
     creado_en = models.DateTimeField(auto_now_add=True, null=True, blank=True, editable=False)
     actualizado_en = models.DateTimeField(auto_now=True, null=True, blank=True)
 

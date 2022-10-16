@@ -14,8 +14,9 @@ class PagoAdmin(admin.ModelAdmin):
         return '${:,.2f}'.format(obj.valor) if obj.valor else ""
 
 class DeudaAdmin(admin.ModelAdmin):
-    list_display = ['id', 'compra', 'valor_saldo','fecha_inicio', 'fecha_fin']
+    list_display = ['id', 'compra', 'valor_saldo','fecha_inicio', 'fecha_fin', 'estado']
     search_fields = ['compra__id', 'fecha_inicio']
+    list_filter = ['estado']
     # raw_id_fields = ['compra']
 
     def valor_saldo(self, obj):
