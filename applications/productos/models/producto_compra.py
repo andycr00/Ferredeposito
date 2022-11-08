@@ -10,6 +10,7 @@ class ProductoCompra(models.Model):
     compra = models.ForeignKey(Compra, on_delete=models.DO_NOTHING)
     marca = models.ForeignKey(Marca, on_delete=models.DO_NOTHING)
     precio_compra = models.FloatField(null=True, blank=True)
+    valor_total = models.FloatField(null=True, blank=True)
     precio_venta = models.FloatField(null=True, blank=True)
     descripcion = models.CharField(max_length=300 ,null=True, blank=True)
     cantidad = models.FloatField(null=True, blank=True)
