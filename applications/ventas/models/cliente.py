@@ -3,7 +3,7 @@ from django.db import models
 class Cliente(models.Model):
     razon_social = models.CharField(max_length=255)
     descripcion = models.CharField(max_length=255, null=True)
-    nit = models.CharField(max_length=12, null=True, blank=True)
+    nit = models.CharField(max_length=30, null=True, blank=True)
     correo = models.CharField(max_length=100, null=True)
     direccion = models.CharField(max_length=100, null=True)
     telefono = models.CharField(max_length=100, null=True)

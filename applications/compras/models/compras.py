@@ -19,6 +19,7 @@ class Compra(models.Model):
     no_factura = models.CharField(max_length= 100,blank=True, null= True)
     forma_pago = models.CharField(max_length=200, choices=PAYMENT_CHOICES, default="CONTADO", null=True, blank=True)
     valor_compra = models.FloatField(blank=True, null=True)
+    total_iva = models.FloatField(blank=True, null=True)
     creado_en = models.DateTimeField(auto_now_add=True, null=True, blank=True, editable=False)
     actualizado_en = models.DateTimeField(auto_now=True, null=True, blank=True)
 
