@@ -1,0 +1,39 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="data">{{df|safe}}</div>
+  </body>
+
+  <script type="text/javascript">
+    let htmlObject = document.getElementById("data");
+    const data = htmlObject.innerText;
+    let doc = document.createElement('div');
+    doc.innerHTML = doc;
+  </script>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <table
+      class="table table-bordered"
+      id="dataTable"
+      width="100%"
+      cellspacing="0"
+    >
+      <div>{{data|safe}}</div>
+    </table>
+  </body>
+</html>
