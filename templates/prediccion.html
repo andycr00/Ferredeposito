@@ -492,7 +492,24 @@
                       Ventas realizadas por mes año 2021
                     </h6>
                   </div>
-                  <div>{{before|safe}}</div>
+                  <div>
+                    <table
+                        class="table table-bordered"
+                        id="dataTable"
+                        width="100%"
+                        cellspacing="0"
+                      >
+                        <thead>
+                          <tr>
+                            <th>Modelo</th>
+                            <th>Precision</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{tabla_precision|safe}}
+                        </tbody>
+                      </table>
+                  </div>
                 </div>
               </div>
             </div>

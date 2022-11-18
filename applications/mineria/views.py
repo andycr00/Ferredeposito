@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
 import seaborn as sns
 import base64
 from io import BytesIO
@@ -23,7 +25,6 @@ conn = pyodbc.connect(str_conexion)
 
 
 def home(request):
-
     """--------------------GRAFICA VENTAS POR MES--------------------"""
 
     query_str = """
@@ -33,30 +34,46 @@ def home(request):
 
     data = pd.read_sql(query_str, conn)
 
-    X = np.array(data[['mes', 'total_mes']])
+    X = np.array(data[["mes", "total_mes"]])
     fig = plt.figure(figsize=(10, 6))
     plt.plot(X[:, 0], X[:, 1])
-    plt.xlabel('Valor ventas')
-    plt.ylabel('mes')
-    plt.title('Ventas x Mes 2021')
+    plt.xlabel("Valor ventas")
+    plt.ylabel("mes")
+    plt.title("Ventas x Mes 2021")
 
     tmpfile = BytesIO()
-    fig.savefig(tmpfile, format='png')
-    encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+    fig.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
 
-    img_ventas = '<img src=\'data:image/png;base64,{}\'>'.format(encoded)
+    img_ventas = "<img src='data:image/png;base64,{}'>".format(encoded)
 
     """--------------------TABLA VENTAS POR MES--------------------"""
 
-    meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-             'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    meses = [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre",
+    ]
 
-    tabla = ''
+    tabla = ""
 
     for i in range(len(data)):
-        tabla += '<tr><td>' + \
-            meses[i] + '</td><td>' + \
-            '${:,.2f}'.format(data.iloc[i]['total_mes']) + '</td></tr>'
+        tabla += (
+            "<tr><td>"
+            + meses[i]
+            + "</td><td>"
+            + "${:,.2f}".format(data.iloc[i]["total_mes"])
+            + "</td></tr>"
+        )
 
     """--------------------TABLA TOP CLIENTES EN TOTAL--------------------"""
 
@@ -70,27 +87,45 @@ def home(request):
 
     data1 = pd.read_sql(query_str, conn)
 
-    tabla1 = ''
+    tabla1 = ""
     for i in range(len(data1)):
-        tabla1 += '<tr><td>' + \
-            str(data1.iloc[i]['razon_social']) + '</td><td>' + \
-            '${:,.2f}'.format(data1.iloc[i]['venta']) + '</td></tr>'
-    
+        tabla1 += (
+            "<tr><td>"
+            + str(data1.iloc[i]["razon_social"])
+            + "</td><td>"
+            + "${:,.2f}".format(data1.iloc[i]["venta"])
+            + "</td></tr>"
+        )
+
     """--------------------GRAFICA TOP CLIENTES EN TOTAL--------------------"""
 
-    x = np.array(data1[['razon_social', 'venta']])
+    x = np.array(data1[["razon_social", "venta"]])
     fig3 = plt.figure(figsize=(10, 6))
-    plt.barh(x[:, 0], x[:, 1], color=['#51FF00', '#1BFF00', '#00FF36', '#00FF87',
-             '#00FFCD', '#00F7FF', '#00E4FF', '#00BDFF', '#0087FF', '#0068FF'])
-    plt.xlabel('Valor ventas')
-    plt.ylabel('Clientes')
-    plt.title('Ventas x Mes 2021')
+    plt.barh(
+        x[:, 0],
+        x[:, 1],
+        color=[
+            "#51FF00",
+            "#1BFF00",
+            "#00FF36",
+            "#00FF87",
+            "#00FFCD",
+            "#00F7FF",
+            "#00E4FF",
+            "#00BDFF",
+            "#0087FF",
+            "#0068FF",
+        ],
+    )
+    plt.xlabel("Valor ventas")
+    plt.ylabel("Clientes")
+    plt.title("Ventas x Mes 2021")
 
     tmpfile = BytesIO()
-    fig3.savefig(tmpfile, format='png')
-    encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+    fig3.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
 
-    img_ventas2 = '<img src=\'data:image/png;base64,{}\'>'.format(encoded)
+    img_ventas2 = "<img src='data:image/png;base64,{}'>".format(encoded)
 
     """--------------------TABLA TOP PRODUCTOS EN TOTAL--------------------"""
 
@@ -103,11 +138,15 @@ def home(request):
 
     data = pd.read_sql(query_str, conn)
 
-    tabla2 = ''
+    tabla2 = ""
     for i in range(len(data)):
-        tabla2 += '<tr><td>' + \
-            str(data.iloc[i]['producto']) + '</td><td>' + \
-            str(data.iloc[i]['cantidad']) + '</td></tr>'
+        tabla2 += (
+            "<tr><td>"
+            + str(data.iloc[i]["producto"])
+            + "</td><td>"
+            + str(data.iloc[i]["cantidad"])
+            + "</td></tr>"
+        )
 
     """--------------------TABLA TOP CLIENTES TOTAL EN COMPRAS--------------------"""
 
@@ -121,11 +160,15 @@ def home(request):
 
     data = pd.read_sql(query_str, conn)
 
-    tabla3 = ''
+    tabla3 = ""
     for i in range(len(data)):
-        tabla3 += '<tr><td>' + \
-            str(data.iloc[i]['razon_social']) + '</td><td>' + \
-            str(data.iloc[i]['total']) + '</td></tr>'
+        tabla3 += (
+            "<tr><td>"
+            + str(data.iloc[i]["razon_social"])
+            + "</td><td>"
+            + str(data.iloc[i]["total"])
+            + "</td></tr>"
+        )
 
     m = {
         "before": img_ventas,
@@ -136,11 +179,10 @@ def home(request):
         "tabla4": tabla3,
     }
 
-    return render(request, 'index.html', context=m)
+    return render(request, "index.html", context=m)
 
 
 def clusters(request):
-
     """--------------------GRAFICA PRODUCTOS X CANTIDAD--------------------"""
 
     query_str = """
@@ -155,18 +197,18 @@ def clusters(request):
 
     dataset = data.drop(data[(data.cantidad > 300) |
                         (data.cantidad < 10)].index)
-    X = np.array(dataset[['producto_id', 'cantidad']])
+    X = np.array(dataset[["producto_id", "cantidad"]])
     fig = plt.figure(figsize=(10, 6))
     plt.scatter(X[:, 0], X[:, 1])
-    plt.xlabel('Producto ID')
-    plt.ylabel('Cantidad')
-    plt.title('Cantidad x producto')
+    plt.xlabel("Producto ID")
+    plt.ylabel("Cantidad")
+    plt.title("Cantidad x producto")
 
     tmpfile = BytesIO()
-    fig.savefig(tmpfile, format='png')
-    encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+    fig.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
 
-    cluster1 = '<img src=\'data:image/png;base64,{}\'>'.format(encoded)
+    cluster1 = "<img src='data:image/png;base64,{}'>".format(encoded)
 
     """--------------------KMEANS PRODUCTOS POR CANTIDAD--------------------"""
 
@@ -174,97 +216,118 @@ def clusters(request):
     centroides = kmeans.cluster_centers_
     etiquetas = kmeans.labels_
     fig = plt.figure(figsize=(10, 6))
-    plt.scatter(X[:, 0], X[:, 1], c=etiquetas, cmap='rainbow')
-    plt.scatter(centroides[:, 0], centroides[:, 1], color='black',
-                marker='*', s=100)
-    plt.xlabel('Producto')
-    plt.ylabel('Cantidad')
-    plt.title('KMeans Productos')
+    plt.scatter(X[:, 0], X[:, 1], c=etiquetas, cmap="rainbow")
+    plt.scatter(centroides[:, 0], centroides[:, 1],
+                color="black", marker="*", s=100)
+    plt.xlabel("Producto")
+    plt.ylabel("Cantidad")
+    plt.title("KMeans Productos")
 
     tmpfile = BytesIO()
-    fig.savefig(tmpfile, format='png')
-    encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+    fig.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
 
-    cluster2 = '<img src=\'data:image/png;base64,{}\'>'.format(encoded)
+    cluster2 = "<img src='data:image/png;base64,{}'>".format(encoded)
 
     """--------------------GMM PRODUCTOS X CANTIDAD--------------------"""
 
     dataset = data.drop(data[(data.cantidad > 300) |
                         (data.cantidad < 10)].index)
-    dataset=dataset.drop(["mes"], axis=1)
+    dataset = dataset.drop(["mes"], axis=1)
     print(dataset)
     kmeans = KMeans(n_clusters=4)
     kmeans.fit(dataset)
     pred = kmeans.predict(dataset)
     frame = pd.DataFrame(dataset)
-    frame['cluster'] = pred
-    frame.columns = ['producto_id', 'cantidad', 'cluster']
-    #plotting results
-    fig6 = plt.figure(figsize=(10,6))
-    color=['blue','yellow','cyan', 'red']
-    for k in range(0,4):
-        dataset = frame[frame["cluster"]==k]
-        plt.scatter(dataset["producto_id"],dataset["cantidad"],c=color[k])
-    plt.xlabel('Productos')
-    plt.ylabel('Cantidad')
-    plt.title('GMM Clustering')
+    frame["cluster"] = pred
+    frame.columns = ["producto_id", "cantidad", "cluster"]
+    # plotting results
+    fig6 = plt.figure(figsize=(10, 6))
+    color = ["blue", "yellow", "cyan", "red"]
+    for k in range(0, 4):
+        dataset = frame[frame["cluster"] == k]
+        plt.scatter(dataset["producto_id"], dataset["cantidad"], c=color[k])
+    plt.xlabel("Productos")
+    plt.ylabel("Cantidad")
+    plt.title("GMM Clustering")
 
     tmpfile = BytesIO()
-    fig6.savefig(tmpfile, format='png')
-    encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+    fig6.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
 
-    cluster6 = '<img src=\'data:image/png;base64,{}\'>'.format(encoded)
+    cluster6 = "<img src='data:image/png;base64,{}'>".format(encoded)
 
     """--------------------DBSCAN FAILED--------------------"""
 
     cluster = DBSCAN(eps=3, min_samples=3).fit(data)
-    DBSCAN_dataset= data.copy()
-    DBSCAN_dataset.loc[:, 'Cluster'] = cluster.labels_
-    outliers = DBSCAN_dataset[DBSCAN_dataset['Cluster'] == -1]
+    DBSCAN_dataset = data.copy()
+    DBSCAN_dataset.loc[:, "Cluster"] = cluster.labels_
+    outliers = DBSCAN_dataset[DBSCAN_dataset["Cluster"] == -1]
 
     fig2, (axes) = plt.subplots(1, 2, figsize=(10, 5))
-    sns.scatterplot('producto_id', 'cantidad',
-                    data=DBSCAN_dataset[DBSCAN_dataset['Cluster'] != -1],
-                    ax=axes[0], palette='Set2', s=200)
+    sns.scatterplot(
+        "producto_id",
+        "cantidad",
+        data=DBSCAN_dataset[DBSCAN_dataset["Cluster"] != -1],
+        ax=axes[0],
+        palette="Set2",
+        s=200,
+    )
 
-    sns.scatterplot('mes', 'cantidad',
-                    data=DBSCAN_dataset[DBSCAN_dataset['Cluster'] != -1],
-       
-                    ax=axes[1], palette='Set2', s=200)
-    axes[0].scatter(outliers['producto_id'], outliers['cantidad'],
-                    s=10, label='outliers', c="k")
+    sns.scatterplot(
+        "mes",
+        "cantidad",
+        data=DBSCAN_dataset[DBSCAN_dataset["Cluster"] != -1],
+        ax=axes[1],
+        palette="Set2",
+        s=200,
+    )
+    axes[0].scatter(
+        outliers["producto_id"], outliers["cantidad"], s=10, label="outliers", c="k"
+    )
 
-    axes[1].scatter(outliers['mes'], outliers['cantidad'],
-                    s=10, label='outliers', c="k")
+    axes[1].scatter(
+        outliers["mes"], outliers["cantidad"], s=10, label="outliers", c="k"
+    )
     axes[0].legend()
     axes[1].legend()
-    plt.setp(axes[0].get_legend().get_texts(), fontsize='12')
-    plt.setp(axes[1].get_legend().get_texts(), fontsize='12')
+    plt.setp(axes[0].get_legend().get_texts(), fontsize="12")
+    plt.setp(axes[1].get_legend().get_texts(), fontsize="12")
 
     tmpfile = BytesIO()
-    fig2.savefig(tmpfile, format='png')
-    encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+    fig2.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
 
-    cluster3 = '<img src=\'data:image/png;base64,{}\'>'.format(encoded)
+    cluster3 = "<img src='data:image/png;base64,{}'>".format(encoded)
 
-    """--------------------DBSCAN--------------------"""
+    """--------------------DBSCAN FAILED--------------------"""
 
     fig3, (axes) = plt.subplots(1, 2, figsize=(10, 5))
-    sns.scatterplot('producto_id', 'cantidad',
-                    data=DBSCAN_dataset[DBSCAN_dataset['Cluster'] != -1],
-                    ax=axes[0], palette='Set2', s=200)
+    sns.scatterplot(
+        "producto_id",
+        "cantidad",
+        data=DBSCAN_dataset[DBSCAN_dataset["Cluster"] != -1],
+        ax=axes[0],
+        palette="Set2",
+        s=200,
+    )
 
-    sns.scatterplot('mes', 'cantidad',
-                    data=DBSCAN_dataset[DBSCAN_dataset['Cluster'] != -1],
-                    ax=axes[1], palette='Set2', s=200)
+    sns.scatterplot(
+        "mes",
+        "cantidad",
+        data=DBSCAN_dataset[DBSCAN_dataset["Cluster"] != -1],
+        ax=axes[1],
+        palette="Set2",
+        s=200,
+    )
 
     tmpfile = BytesIO()
-    fig3.savefig(tmpfile, format='png')
-    encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+    fig3.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
 
-    cluster4 = '<img src=\'data:image/png;base64,{}\'>'.format(encoded)
+    cluster4 = "<img src='data:image/png;base64,{}'>".format(encoded)
 
-    
+    """--------------------DBSCAN FAILED--------------------"""
 
     query_str = """
         SELECT FORMAT(fecha, 'yyyyMMdd') fecha, sum(valor_total) valor FROM ventas_venta
@@ -275,22 +338,21 @@ def clusters(request):
 
     cluster = DBSCAN(eps=12.5, min_samples=4).fit(data1)
     DBSCAN_dataset = data1.copy()
-    DBSCAN_dataset.loc[:, 'Cluster'] = cluster.labels_
+    DBSCAN_dataset.loc[:, "Cluster"] = cluster.labels_
 
     fig4, (axes) = plt.subplots(1, figsize=(10, 5))
-    sns.scatterplot('fecha', 'valor',
-                    data=DBSCAN_dataset,
-                    ax=axes, palette='Set2', s=200)
+    sns.scatterplot(
+        "fecha", "valor", data=DBSCAN_dataset, ax=axes, palette="Set2", s=200
+    )
 
     axes.legend()
-    plt.setp(axes.get_legend().get_texts(), fontsize='12')
+    plt.setp(axes.get_legend().get_texts(), fontsize="12")
 
     tmpfile = BytesIO()
-    fig4.savefig(tmpfile, format='png')
-    encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+    fig4.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
 
-    cluster5 = '<img src=\'data:image/png;base64,{}\'>'.format(encoded)
-    
+    cluster5 = "<img src='data:image/png;base64,{}'>".format(encoded)
 
     m = {
         "cluster1": cluster1,
@@ -301,41 +363,63 @@ def clusters(request):
         "cluster6": cluster6,
     }
 
-    return render(request, 'cluster.html', context=m)
+    return render(request, "cluster.html", context=m)
+
 
 def prediccion(request):
-    
+    """--------------------LINEAR REGRESSION FAILED--------------------"""
+
     query_str = """
-    SELECT MONTH(fecha) as mes, producto_id, SUM(cantidad) cantidad
-    FROM   ventas_venta AS ven
-    INNER JOIN ventas_productoventa AS v ON v.venta_id = ven.id
-    GROUP BY month(fecha), producto_id
-    ORDER BY 3 DESC"""
+        SELECT MONTH(fecha) mes, day(fecha) dia , DATEPART(HOUR, fecha) 
+        hora, categoria_id from ventas_venta vent
+        INNER JOIN ventas_productoventa ven ON vent.id = ven.venta_id
+        INNER JOIN productos_producto prod ON prod.id = ven.producto_id
+        WHERE categoria_id IN (2,13,7,6,8,15,19,5,3,23)
+    """
 
     data = pd.read_sql(query_str, conn)
 
+    Lista_condicion2 = [
+    (data["categoria_id"]==2),
+    (data["categoria_id"]==13),
+    (data["categoria_id"]==7),
+    (data["categoria_id"]==6),
+    (data["categoria_id"]==8),
+    (data["categoria_id"]==15),
+    (data["categoria_id"]==19),
+    (data["categoria_id"]==5),
+    (data["categoria_id"]==3),
+    (data["categoria_id"]==23)
+]
+    Lista_clasificacion = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
-    """
-    Kmeans - grafica corriente
-    """
-    dataset = data.drop(data[(data.cantidad > 300) |
-                        (data.cantidad < 10)].index)
-    X = np.array(dataset[['producto_id', 'cantidad']])
-    fig = plt.figure(figsize=(10, 6))
-    plt.scatter(X[:, 0], X[:, 1])
-    plt.xlabel('Producto ID')
-    plt.ylabel('Cantidad')
-    plt.title('Cantidad x producto')
+    data["que_tanto"]= np.select(Lista_condicion2, Lista_clasificacion, default = "no especificado")
 
-    tmpfile = BytesIO()
-    fig.savefig(tmpfile, format='png')
-    encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+    X = data.iloc[:, :-1].values
+    y = data.iloc[:, -1].values
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
 
-    cluster1 = '<img src=\'data:image/png;base64,{}\'>'.format(encoded)
-    
+    regressor = LinearRegression()
+    regressor.fit(X_train, y_train)
+
+    regressor.predict(X_test)
+    RegresionLineal = (regressor.score(X_train, y_train) *100).round(4) , '%'
+
+    obj = {"Regresion Lineal": RegresionLineal}
+
+    tabla = ""
+
+    for val in obj:
+        tabla += (
+            "<tr><td>" 
+            + val
+            + "</td><td>"
+            + str(obj[val])
+            + "</td></tr>"
+        )
 
     m = {
-        "before": cluster1,
+        "tabla_precision": tabla,
     }
 
-    return render(request, 'prediccion.html', context=m)
+    return render(request, "prediccion.html", context=m)
