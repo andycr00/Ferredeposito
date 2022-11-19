@@ -16,6 +16,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import plot_confusion_matrix
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 import seaborn as sns
@@ -493,7 +495,15 @@ def prediccion(request):
     fig3 = plt.figure(figsize=(10, 6))
     plt.bar(
         names,
-        values
+        values,
+        color=[
+            "#45B8AC",
+            "#EFC050",
+            "#5B5EA6",
+            "#55B4B0",
+            "#98B4D4",
+            "#FF6F61",
+        ],
     )
     plt.ylabel("Precision")
     plt.title("Precision en la prediccion")
@@ -513,6 +523,187 @@ def prediccion(request):
 
 
 def clasificacion(request):
+    """--------------------CLASIFICACION KMEANS--------------------"""
+
+    query_str = """
+        SELECT MONTH(fecha) as mes, producto_id, SUM(cantidad) cantidad
+        FROM   ventas_venta AS ven	
+        INNER JOIN ventas_productoventa AS v ON v.venta_id = ven.id
+        GROUP BY month(fecha), producto_id
+        ORDER BY 3 DESC
+    """
+
+    data = pd.read_sql(query_str, conn)
+
+    Lista_condicion = [
+        (data["cantidad"] <50),
+        (data["cantidad"] >= 50),
+    ]
+
+    Lista_clasificacion = [0, 1]
+
+    data["que_tanto"] = np.select(
+        Lista_condicion, Lista_clasificacion, default=10)
+
+    y = data['que_tanto']
+    X = data.iloc[:, :-1]
+
+    X_train, X_test, Y_train, Y_test = train_test_split(
+        X, y, test_size=0.2, random_state=0)
+
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.fit_transform(X_test)
+
+    classifier = LogisticRegression(random_state=0, max_iter=300)
+    classifier = classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+
+    precision1 = (precision_score(Y_test, Y_pred)*100).round(3)
+
+    classifier.fit(X_train, Y_train)
+    fig1, ax = plt.subplots(figsize=(5, 5))
+    plot_confusion_matrix(classifier, X_test, Y_test, ax=ax)
+
+    tmpfile = BytesIO()
+    fig1.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    cm1 = "<img src='data:image/png;base64,{}'>".format(encoded)    
+
+    classifier = KNeighborsClassifier(n_neighbors=5, metric='minkowski', p=2)
+    classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+
+    precision2 = (precision_score(Y_test, Y_pred) * 100).round(3)
+    fig2, ax = plt.subplots(figsize=(5, 5))
+    plot_confusion_matrix(classifier, X_test, Y_test, ax=ax)
+
+    tmpfile = BytesIO()
+    fig2.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    cm2 = "<img src='data:image/png;base64,{}'>".format(encoded)  
+
+    classifier = SVC(kernel='linear', random_state=0)
+    classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+
+    precision3 = (precision_score(Y_test, Y_pred) * 100).round(3)
+    fig3, ax = plt.subplots(figsize=(5, 5))
+    plot_confusion_matrix(classifier, X_test, Y_test, ax=ax)
+
+    tmpfile = BytesIO()
+    fig3.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    cm3 = "<img src='data:image/png;base64,{}'>".format(encoded)  
+
+    classifier = SVC(kernel='rbf', random_state=0)
+    classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+
+    precision4 = (precision_score(Y_test, Y_pred) * 100).round(3)
+    fig4, ax = plt.subplots(figsize=(5, 5))
+    plot_confusion_matrix(classifier, X_test, Y_test, ax=ax)
+
+    tmpfile = BytesIO()
+    fig4.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    cm4 = "<img src='data:image/png;base64,{}'>".format(encoded)  
+
+    classifier = GaussianNB()
+    classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+    precision5 = (precision_score(Y_test, Y_pred)*100).round(3)
+
+    fig5, ax = plt.subplots(figsize=(5, 5))
+    plot_confusion_matrix(classifier, X_test, Y_test, ax=ax)
+
+    tmpfile = BytesIO()
+    fig5.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    cm5 = "<img src='data:image/png;base64,{}'>".format(encoded)  
+
+
+    classifier = DecisionTreeClassifier(criterion = 'entropy', random_state = 0)
+    classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+
+    precision6 = (precision_score(Y_test, Y_pred) * 100).round(3)
+
+    fig6, ax = plt.subplots(figsize=(5, 5))
+    plot_confusion_matrix(classifier, X_test, Y_test, ax=ax)
+
+    tmpfile = BytesIO()
+    fig6.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    cm6 = "<img src='data:image/png;base64,{}'>".format(encoded)  
+
+
+    obj = {
+        "Regresion Logistica": precision1,
+        "KNeighbors Classifier": precision2,
+        "Vectores Soporte": precision3,
+        "Kernel SVM": precision4,
+        "Naïve Bayes": precision5,
+        "Arbol de decision": precision6
+    }
+
+    tabla = ""
+
+    for val in obj:
+        tabla += (
+            "<tr><td>"
+            + val
+            + "</td><td>"
+            + str(obj[val]) + ' %'
+            + "</td></tr>"
+        )
+    names = []
+    values = []
+    for i in obj:
+        names.append(i)
+        values.append(obj[i])
+    fig3 = plt.figure(figsize=(10, 6))
+    plt.bar(
+        names,
+        values,
+        color=[
+            "#45B8AC",
+            "#EFC050",
+            "#5B5EA6",
+            "#55B4B0",
+            "#98B4D4",
+            "#FF6F61",
+        ],
+    )
+    plt.ylabel("Precision")
+    plt.title("Precision en la prediccion")
+
+    tmpfile = BytesIO()
+    fig3.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    predTable = "<img src='data:image/png;base64,{}'>".format(encoded)
+
+    m = {
+        "tabla_precision": tabla,
+        "grafica": predTable,
+        "cm1": cm1,
+        "cm2": cm2,
+        "cm3": cm3,
+        "cm4": cm4,
+        "cm5": cm5,
+        "cm6": cm6,
+    }
+
+    return render(request, "clasificacion.html", context=m)
+
+def clasificacion2(request):
     """--------------------LINEAR REGRESSION FAILED--------------------"""
 
     query_str = """
@@ -603,11 +794,44 @@ def clasificacion(request):
 
     cm4 = "<img src='data:image/png;base64,{}'>".format(encoded)  
 
+    classifier = GaussianNB()
+    classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+    precision5 = (precision_score(Y_test, Y_pred)*100).round(3)
+
+    fig5, ax = plt.subplots(figsize=(5, 5))
+    plot_confusion_matrix(classifier, X_test, Y_test, ax=ax)
+
+    tmpfile = BytesIO()
+    fig5.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    cm5 = "<img src='data:image/png;base64,{}'>".format(encoded)  
+
+
+    classifier = DecisionTreeClassifier(criterion = 'entropy', random_state = 0)
+    classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+
+    precision6 = (precision_score(Y_test, Y_pred) * 100).round(3)
+
+    fig6, ax = plt.subplots(figsize=(5, 5))
+    plot_confusion_matrix(classifier, X_test, Y_test, ax=ax)
+
+    tmpfile = BytesIO()
+    fig6.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    cm6 = "<img src='data:image/png;base64,{}'>".format(encoded)  
+
+
     obj = {
-        "Regresion Logistica": precision1,
-        "KNeighbors Classifier": precision2,
-        "Vectores Soporte": precision3,
-        "Kernel SVM": precision4
+        "R. Logistica": precision1,
+        "KNeighbors": precision2,
+        "Vect. Soporte": precision3,
+        "Kernel SVM": precision4,
+        "Naïve Bayes": precision5,
+        "Arbol decision": precision6
     }
 
     tabla = ""
@@ -628,7 +852,15 @@ def clasificacion(request):
     fig3 = plt.figure(figsize=(10, 6))
     plt.bar(
         names,
-        values
+        values,
+        color=[
+            "#45B8AC",
+            "#EFC050",
+            "#5B5EA6",
+            "#55B4B0",
+            "#98B4D4",
+            "#FF6F61",
+        ],
     )
     plt.ylabel("Precision")
     plt.title("Precision en la prediccion")
@@ -646,6 +878,8 @@ def clasificacion(request):
         "cm2": cm2,
         "cm3": cm3,
         "cm4": cm4,
+        "cm5": cm5,
+        "cm6": cm6,
     }
 
     return render(request, "clasificacion.html", context=m)
