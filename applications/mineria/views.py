@@ -375,8 +375,130 @@ def clusters(request):
 
     return render(request, "cluster.html", context=m)
 
-
 def prediccion(request):
+    """--------------------LINEAR REGRESSION FAILED--------------------"""
+
+    query_str = """
+        SELECT MONTH(fecha) as mes, producto_id, SUM(cantidad) cantidad
+        FROM   ventas_venta AS ven	
+        INNER JOIN ventas_productoventa AS v ON v.venta_id = ven.id
+        GROUP BY month(fecha), producto_id
+        ORDER BY 3 DESC
+    """
+
+    data = pd.read_sql(query_str, conn)
+
+    Lista_condicion = [
+        (data["cantidad"]<50),
+        (data["cantidad"]>=50) & (data["cantidad"]<100),
+        (data["cantidad"]>=100) & (data["cantidad"]<200),
+        (data["cantidad"]>=200)
+    ]
+    Lista_clasificacion = [0,1,2,3]
+
+    data["que_tanto"] = np.select(
+        Lista_condicion, Lista_clasificacion, default="no especificado")
+
+    X = data.iloc[:, :-1].values
+    y = data.iloc[:, -1].values
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.4, random_state=0)
+
+    regressor = LinearRegression()
+    regressor.fit(X_train, y_train)
+
+    regressor.predict(X_test)
+    RegresionLineal = (regressor.score(X_train, y_train) * 100).round(3)
+
+    x = data.iloc[:, 1]
+    y = data.iloc[:, -1]
+
+    myline = np.linspace(1, 250, 200, dtype=int)
+    mymodel = np.poly1d(np.polyfit(x, y.astype('f'), 3))
+    plt.scatter(x, y.astype('f'))
+    plt.plot(myline, mymodel(myline))
+
+    speed = (r2_score(y, mymodel(x)) * 100).round(3)
+
+    Lista_condicion = [
+        (data["cantidad"] < 50),
+        (data["cantidad"] >= 50),
+    ]
+
+    Lista_clasificacion = [0, 1]
+
+    data["que_tanto"] = np.select(
+        Lista_condicion, Lista_clasificacion, default=10)
+
+    y = data['que_tanto']
+    X = data.iloc[:, :-1]
+
+    X_train, X_test, Y_train, Y_test = train_test_split(
+        X, y, test_size=0.2, random_state=0)
+
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.fit_transform(X_test)
+
+    classifier = LogisticRegression(random_state=0, max_iter=300)
+    classifier = classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+
+    precision = (precision_score(Y_test, Y_pred)*100).round(3)
+
+    obj = {
+        "Regresion Lineal": RegresionLineal,
+        "Regresion Polinomial": speed,
+        "Regresion Logística": precision,
+    }
+
+    tabla = ""
+
+    for val in obj:
+        tabla += (
+            "<tr><td>"
+            + val
+            + "</td><td>"
+            + str(obj[val]) + ' %'
+            + "</td></tr>"
+        )
+
+    names = []
+    values = []
+    for i in obj:
+        names.append(i)
+        values.append(obj[i])
+    fig3 = plt.figure(figsize=(10, 6))
+    plt.bar(
+        names,
+        values,
+        color=[
+            "#45B8AC",
+            "#EFC050",
+            "#5B5EA6",
+            "#55B4B0",
+            "#98B4D4",
+            "#FF6F61",
+        ],
+    )
+    plt.ylabel("Precision")
+    plt.title("Precision en la prediccion")
+
+    tmpfile = BytesIO()
+    fig3.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    predTable = "<img src='data:image/png;base64,{}'>".format(encoded)
+
+    m = {
+        "tabla_precision": tabla,
+        "grafica": predTable
+    }
+
+    return render(request, "prediccion.html", context=m)
+
+
+def prediccion2(request):
     """--------------------LINEAR REGRESSION FAILED--------------------"""
 
     query_str = """
