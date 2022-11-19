@@ -43,7 +43,7 @@
           <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
           </div>
-          <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+          <div class="sidebar-brand-text mx-3">Mineria<sup>2</sup></div>
         </a>
 
         <!-- Divider -->
@@ -67,7 +67,7 @@
         <li class="nav-item">
           <a
             class="nav-link collapsed"
-            href="#"
+            href="/cluster"
             data-toggle="collapse"
             data-target="#collapseTwo"
             aria-expanded="true"
@@ -89,7 +89,7 @@
             aria-controls="collapseUtilities"
           >
             <i class="fas fa-fw fa-wrench"></i>
-            <span>Predicción</span>
+            <span>Predicción </span>
           </a>
           <div
             id="collapseUtilities"
@@ -109,37 +109,36 @@
           </div>
         </li>
 
-                <!-- Nav Item - Utilities Collapse Menu -->
-                <li class="nav-item">
-                  <a
-                    class="nav-link collapsed"
-                    href="/clasificacion"
-                    data-toggle="collapse"
-                    data-target="#collapseUtilities"
-                    aria-expanded="true"
-                    aria-controls="collapseUtilities"
-                  >
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Clasificacion
-                    </span>
-                  </a>
-                  <div
-                    id="collapseUtilities"
-                    class="collapse"
-                    aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar"
-                  >
-                    <div class="bg-white py-2 collapse-inner rounded">
-                      <h6 class="collapse-header">Custom Utilities:</h6>
-                      <a class="collapse-item" href="utilities-color.html">Colors</a>
-                      <a class="collapse-item" href="utilities-border.html">Borders</a>
-                      <a class="collapse-item" href="utilities-animation.html"
-                        >Animations</a
-                      >
-                      <a class="collapse-item" href="utilities-other.html">Other</a>
-                    </div>
-                  </div>
-                </li>
+        <!-- Nav Item - Utilities Collapse Menu -->
+        <li class="nav-item">
+          <a
+            class="nav-link collapsed"
+            href="/clasificacion"
+            data-toggle="collapse"
+            data-target="#collapseUtilities"
+            aria-expanded="true"
+            aria-controls="collapseUtilities"
+          >
+            <i class="fas fa-fw fa-wrench"></i>
+            <span>Clasificacion </span>
+          </a>
+          <div
+            id="collapseUtilities"
+            class="collapse"
+            aria-labelledby="headingUtilities"
+            data-parent="#accordionSidebar"
+          >
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header">Custom Utilities:</h6>
+              <a class="collapse-item" href="utilities-color.html">Colors</a>
+              <a class="collapse-item" href="utilities-border.html">Borders</a>
+              <a class="collapse-item" href="utilities-animation.html"
+                >Animations</a
+              >
+              <a class="collapse-item" href="utilities-other.html">Other</a>
+            </div>
+          </div>
+        </li>
 
         <!-- Divider -->
         <hr class="sidebar-divider" />
@@ -460,13 +459,6 @@
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  <span class="mr-2 d-none d-lg-inline text-gray-600 small"
-                    >Douglas McGee</span
-                  >
-                  <img
-                    class="img-profile rounded-circle"
-                    src="img/undraw_profile.svg"
-                  />
                 </a>
                 <!-- Dropdown - User Information -->
                 <div
@@ -507,35 +499,17 @@
           <div class="container-fluid">
             <!-- Page Heading -->
             <div
-            class="d-sm-flex align-items-center justify-content-between mb-4"
-          >
-            <h1 class="h3 mb-0 text-gray-800">Mineria de Datos</h1>
-            <a
-              href="#"
-              class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-              >Andres Castaño - Julian Florez</a
+              class="d-sm-flex align-items-center justify-content-between mb-4"
             >
-          </div>
+              <h1 class="h3 mb-0 text-gray-800">Mineria de Datos</h1>
+              <a
+                href="#"
+                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+                >Andres Castaño - Julian Florez</a
+              >
+            </div>
             <!-- Content Row -->
 
-            <!-- Cluster 1 -->
-            <div class="row">
-              <div class="col-xl-12 col-lg-12">
-                <div class="card shadow mb-4">
-                  <!-- Card Header - Dropdown -->
-                  <div
-                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
-                  >
-                    <h6 class="m-0 font-weight-bold text-primary">
-                      Clutering con KMeans
-                    </h6>
-                  </div>
-                  <!-- Card Body -->
-                  <div>{{cluster1|safe}}</div>
-                </div>
-              </div>
-            </div>
-            <!-- Cluster 2 -->
             <div class="row">
               <!-- Area Chart -->
               <div class="col-xl-12 col-lg-12">
@@ -545,53 +519,30 @@
                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
                   >
                     <h6 class="m-0 font-weight-bold text-primary">
-                      Clutering con KMeans
+                      Ventas realizadas por mes año 2021
                     </h6>
                   </div>
-                  <!-- Card Body -->
-                  <div>{{cluster2|safe}}</div>
+                  <div>
+                    <table
+                      class="table table-bordered"
+                      id="dataTable"
+                      width="100%"
+                      cellspacing="0"
+                    >
+                      <thead>
+                        <tr>
+                          <th>Modelo</th>
+                          <th>Precision</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {{tabla_precision|safe}}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
-
-                          <!-- Cluster 5 -->
-                          <div class="row">
-                            <!-- Area Chart -->
-                            <div class="col-xl-12 col-lg-12">
-                              <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                  class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
-                                >
-                                  <h6 class="m-0 font-weight-bold text-primary">
-                                    Gaussian Mixture Models Clustering
-                                  </h6>
-                                </div>
-                                <!-- Card Body -->
-                                <div>{{cluster6|safe}}</div>
-                              </div>
-                            </div>
-                          </div>
-              <!-- Cluster 4 -->
-              <div class="row">
-                <!-- Area Chart -->
-                <div class="col-xl-12 col-lg-12">
-                  <div class="card shadow mb-4">
-                    <!-- Card Header - Dropdown -->
-                    <div
-                      class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
-                    >
-                      <h6 class="m-0 font-weight-bold text-primary">
-                        DBSCAN Clustering - Failed
-                      </h6>
-                    </div>
-                    <!-- Card Body -->
-                    <div>{{cluster4|safe}}</div>
-                  </div>
-                </div>
-              </div>
-  
-            <!-- Cluster 3 -->
             <div class="row">
               <!-- Area Chart -->
               <div class="col-xl-12 col-lg-12">
@@ -601,33 +552,87 @@
                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
                   >
                     <h6 class="m-0 font-weight-bold text-primary">
-                      DBSCAN Clustering - Failed
+                      Ventas realizadas por mes año 2021
                     </h6>
                   </div>
-                  <!-- Card Body -->
-                  <div>{{cluster3|safe}}</div>
+                  <div>{{grafica|safe}}</div>
                 </div>
               </div>
             </div>
-
-              <!-- Cluster 5 -->
-              <div class="row">
-                <!-- Area Chart -->
-                <div class="col-xl-12 col-lg-12">
-                  <div class="card shadow mb-4">
-                    <!-- Card Header - Dropdown -->
-                    <div
-                      class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
-                    >
-                      <h6 class="m-0 font-weight-bold text-primary">
-                        DBSCAN Clustering - Failed
-                      </h6>
+            <div class="row">
+              <div class="col-xl-6 col-lg-12">
+                <div class="card shadow mb-4">
+                  <!-- Card Header - Dropdown -->
+                  <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+                  >
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Regresion Logistica
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      {{cm1|safe}}
                     </div>
-                    <!-- Card Body -->
-                    <div>{{cluster5|safe}}</div>
                   </div>
                 </div>
               </div>
+              <div class="col-xl-6 col-lg-12">
+                <div class="card shadow mb-4">
+                  <!-- Card Header - Dropdown -->
+                  <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+                  >
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      KNeighbors Classifier
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      {{cm2|safe}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xl-6 col-lg-12">
+                <div class="card shadow mb-4">
+                  <!-- Card Header - Dropdown -->
+                  <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+                  >
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Vectores Soporte
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      {{cm3|safe}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-6 col-lg-12">
+                <div class="card shadow mb-4">
+                  <!-- Card Header - Dropdown -->
+                  <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+                  >
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Kernel SVM
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      {{cm3|safe}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.container-fluid -->
         </div>
         <!-- End of Main Content -->
 
@@ -705,12 +710,5 @@
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
-    <script type="text/javascript">
-      let htmlObject = document.getElementById("data");
-      const data = htmlObject.innerText;
-      let doc = document.createElement('div');
-      doc.innerHTML = doc;
-    </script>
-    
   </body>
 </html>

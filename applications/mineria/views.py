@@ -8,8 +8,16 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
+from sklearn.metrics import r2_score
+from sklearn.metrics import precision_score
+from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import precision_score
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import plot_confusion_matrix
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
 import seaborn as sns
 import base64
 from io import BytesIO
@@ -379,47 +387,265 @@ def prediccion(request):
 
     data = pd.read_sql(query_str, conn)
 
-    Lista_condicion2 = [
-    (data["categoria_id"]==2),
-    (data["categoria_id"]==13),
-    (data["categoria_id"]==7),
-    (data["categoria_id"]==6),
-    (data["categoria_id"]==8),
-    (data["categoria_id"]==15),
-    (data["categoria_id"]==19),
-    (data["categoria_id"]==5),
-    (data["categoria_id"]==3),
-    (data["categoria_id"]==23)
-]
+    Lista_condicion = [
+        (data["categoria_id"] == 2),
+        (data["categoria_id"] == 13),
+        (data["categoria_id"] == 7),
+        (data["categoria_id"] == 6),
+        (data["categoria_id"] == 8),
+        (data["categoria_id"] == 15),
+        (data["categoria_id"] == 19),
+        (data["categoria_id"] == 5),
+        (data["categoria_id"] == 3),
+        (data["categoria_id"] == 23)
+    ]
     Lista_clasificacion = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
-    data["que_tanto"]= np.select(Lista_condicion2, Lista_clasificacion, default = "no especificado")
+    data["que_tanto"] = np.select(
+        Lista_condicion, Lista_clasificacion, default="no especificado")
 
     X = data.iloc[:, :-1].values
     y = data.iloc[:, -1].values
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.4, random_state=0)
 
     regressor = LinearRegression()
     regressor.fit(X_train, y_train)
 
     regressor.predict(X_test)
-    RegresionLineal = (regressor.score(X_train, y_train) *100).round(4) , '%'
+    RegresionLineal = (regressor.score(X_train, y_train) * 100).round(3)
 
-    obj = {"Regresion Lineal": RegresionLineal}
+    Lista_condicion = [
+        (data["categoria_id"] == 2),
+        (data["categoria_id"] == 13),
+        (data["categoria_id"] == 7),
+        (data["categoria_id"] == 6),
+        (data["categoria_id"] == 8),
+        (data["categoria_id"] == 15),
+        (data["categoria_id"] == 19),
+        (data["categoria_id"] == 5),
+        (data["categoria_id"] == 3),
+        (data["categoria_id"] == 23)
+    ]
+    Lista_clasificacion = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    data["que_tanto"] = np.select(
+        Lista_condicion, Lista_clasificacion, default=10)
+
+    x = data.iloc[:, 1]
+    y = data.iloc[:, -1]
+
+    myline = np.linspace(1, 31, 100, dtype=int)
+    mymodel = np.poly1d(np.polyfit(x, y.astype('f'), 3))
+    plt.scatter(x, y.astype('f'))
+    plt.plot(myline, mymodel(myline))
+
+    speed = (r2_score(y, mymodel(x)) * 100).round(3)
+
+    Lista_condicion = [
+        (data["hora"] < 12),
+        (data["hora"] >= 12),
+    ]
+
+    Lista_clasificacion = [0, 1]
+
+    data["que_tanto"] = np.select(
+        Lista_condicion, Lista_clasificacion, default=10)
+
+    y = data['que_tanto']
+    X = data.iloc[:, :-1]
+
+    X_train, X_test, Y_train, Y_test = train_test_split(
+        X, y, test_size=0.2, random_state=0)
+
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.fit_transform(X_test)
+
+    classifier = LogisticRegression(random_state=0, max_iter=300)
+    classifier = classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+
+    precision = (precision_score(Y_test, Y_pred)*100).round(3)
+
+    obj = {
+        "Regresion Lineal": RegresionLineal,
+        "Regresion Polinomial": speed,
+        "Regresion Logística": precision,
+    }
 
     tabla = ""
 
     for val in obj:
         tabla += (
-            "<tr><td>" 
+            "<tr><td>"
             + val
             + "</td><td>"
-            + str(obj[val])
+            + str(obj[val]) + ' %'
             + "</td></tr>"
         )
 
+    names = []
+    values = []
+    for i in obj:
+        names.append(i)
+        values.append(obj[i])
+    fig3 = plt.figure(figsize=(10, 6))
+    plt.bar(
+        names,
+        values
+    )
+    plt.ylabel("Precision")
+    plt.title("Precision en la prediccion")
+
+    tmpfile = BytesIO()
+    fig3.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    predTable = "<img src='data:image/png;base64,{}'>".format(encoded)
+
     m = {
         "tabla_precision": tabla,
+        "grafica": predTable
     }
 
     return render(request, "prediccion.html", context=m)
+
+
+def clasificacion(request):
+    """--------------------LINEAR REGRESSION FAILED--------------------"""
+
+    query_str = """
+        SELECT MONTH(fecha) mes, day(fecha) dia , DATEPART(HOUR, fecha) 
+        hora, categoria_id from ventas_venta vent
+        INNER JOIN ventas_productoventa ven ON vent.id = ven.venta_id
+        INNER JOIN productos_producto prod ON prod.id = ven.producto_id
+        WHERE categoria_id IN (2,13,7,6,8,15,19,5,3,23)
+    """
+
+    data = pd.read_sql(query_str, conn)
+
+    Lista_condicion = [
+        (data["hora"] < 12),
+        (data["hora"] >= 12),
+    ]
+
+    Lista_clasificacion = [0, 1]
+
+    data["que_tanto"] = np.select(
+        Lista_condicion, Lista_clasificacion, default=10)
+
+    y = data['que_tanto']
+    X = data.iloc[:, :-1]
+
+    X_train, X_test, Y_train, Y_test = train_test_split(
+        X, y, test_size=0.2, random_state=0)
+
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.fit_transform(X_test)
+
+    classifier = LogisticRegression(random_state=0, max_iter=300)
+    classifier = classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+
+    precision1 = (precision_score(Y_test, Y_pred)*100).round(3)
+
+    classifier.fit(X_train, Y_train)
+    fig1, ax = plt.subplots(figsize=(5, 5))
+    plot_confusion_matrix(classifier, X_test, Y_test, ax=ax)
+
+    tmpfile = BytesIO()
+    fig1.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    cm1 = "<img src='data:image/png;base64,{}'>".format(encoded)    
+
+    classifier = KNeighborsClassifier(n_neighbors=5, metric='minkowski', p=2)
+    classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+
+    precision2 = (precision_score(Y_test, Y_pred) * 100).round(3)
+    fig2, ax = plt.subplots(figsize=(5, 5))
+    plot_confusion_matrix(classifier, X_test, Y_test, ax=ax)
+
+    tmpfile = BytesIO()
+    fig2.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    cm2 = "<img src='data:image/png;base64,{}'>".format(encoded)  
+
+    classifier = SVC(kernel='linear', random_state=0)
+    classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+
+    precision3 = (precision_score(Y_test, Y_pred) * 100).round(3)
+    fig3, ax = plt.subplots(figsize=(5, 5))
+    plot_confusion_matrix(classifier, X_test, Y_test, ax=ax)
+
+    tmpfile = BytesIO()
+    fig3.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    cm3 = "<img src='data:image/png;base64,{}'>".format(encoded)  
+
+    classifier = SVC(kernel='rbf', random_state=0)
+    classifier.fit(X_train, Y_train)
+    Y_pred = classifier.predict(X_test)
+
+    precision4 = (precision_score(Y_test, Y_pred) * 100).round(3)
+    fig4, ax = plt.subplots(figsize=(5, 5))
+    plot_confusion_matrix(classifier, X_test, Y_test, ax=ax)
+
+    tmpfile = BytesIO()
+    fig4.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    cm4 = "<img src='data:image/png;base64,{}'>".format(encoded)  
+
+    obj = {
+        "Regresion Logistica": precision1,
+        "KNeighbors Classifier": precision2,
+        "Vectores Soporte": precision3,
+        "Kernel SVM": precision4
+    }
+
+    tabla = ""
+
+    for val in obj:
+        tabla += (
+            "<tr><td>"
+            + val
+            + "</td><td>"
+            + str(obj[val]) + ' %'
+            + "</td></tr>"
+        )
+    names = []
+    values = []
+    for i in obj:
+        names.append(i)
+        values.append(obj[i])
+    fig3 = plt.figure(figsize=(10, 6))
+    plt.bar(
+        names,
+        values
+    )
+    plt.ylabel("Precision")
+    plt.title("Precision en la prediccion")
+
+    tmpfile = BytesIO()
+    fig3.savefig(tmpfile, format="png")
+    encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+
+    predTable = "<img src='data:image/png;base64,{}'>".format(encoded)
+
+    m = {
+        "tabla_precision": tabla,
+        "grafica": predTable,
+        "cm1": cm1,
+        "cm2": cm2,
+        "cm3": cm3,
+        "cm4": cm4,
+    }
+
+    return render(request, "clasificacion.html", context=m)

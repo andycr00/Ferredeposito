@@ -38,7 +38,7 @@
         <!-- Sidebar - Brand -->
         <a
           class="sidebar-brand d-flex align-items-center justify-content-center"
-          href="index.html"
+          href="/"
         >
           <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
@@ -51,7 +51,7 @@
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item active">
-          <a class="nav-link" href="index.html">
+          <a class="nav-link" href="/">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a
           >
@@ -109,6 +109,38 @@
             </div>
           </div>
         </li>
+
+                <!-- Nav Item - Utilities Collapse Menu -->
+                <li class="nav-item">
+                  <a
+                    class="nav-link collapsed"
+                    href="/clasificacion"
+                    data-toggle="collapse"
+                    data-target="#collapseUtilities"
+                    aria-expanded="true"
+                    aria-controls="collapseUtilities"
+                  >
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Clasificacion
+                    </span>
+                  </a>
+                  <div
+                    id="collapseUtilities"
+                    class="collapse"
+                    aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar"
+                  >
+                    <div class="bg-white py-2 collapse-inner rounded">
+                      <h6 class="collapse-header">Custom Utilities:</h6>
+                      <a class="collapse-item" href="utilities-color.html">Colors</a>
+                      <a class="collapse-item" href="utilities-border.html">Borders</a>
+                      <a class="collapse-item" href="utilities-animation.html"
+                        >Animations</a
+                      >
+                      <a class="collapse-item" href="utilities-other.html">Other</a>
+                    </div>
+                  </div>
+                </li>
 
         <!-- Divider -->
         <hr class="sidebar-divider" />
@@ -509,6 +541,24 @@
                           {{tabla_precision|safe}}
                         </tbody>
                       </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <!-- Area Chart -->
+              <div class="col-xl-12 col-lg-12">
+                <div class="card shadow mb-4">
+                  <!-- Card Header - Dropdown -->
+                  <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+                  >
+                    <h6 class="m-0 font-weight-bold text-primary">
+                      Ventas realizadas por mes año 2021
+                    </h6>
+                  </div>
+                  <div>
+                    {{grafica|safe}}
                   </div>
                 </div>
               </div>
