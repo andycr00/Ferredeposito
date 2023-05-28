@@ -26,7 +26,8 @@ class ProductoVentaAdmin(admin.ModelAdmin):
 
 class VentasAdmin(admin.ModelAdmin):
     list_display = ['id', 'cliente', 'valor_tot', 'fecha', 'forma_pago']
-    search_fields = ['cliente', 'fecha',]
+    search_fields = ['cliente__razon_social', 'fecha',]
+
     # raw_id_fields = ['venta', 'producto']
 
     def valor_tot(self, obj):

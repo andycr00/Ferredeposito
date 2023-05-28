@@ -14,14 +14,23 @@ DATABASES = {
     #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     # }
 
+    #  "default": {
+    #     "ENGINE": "mssql",
+    #     "NAME": "Ferredeposito",
+    #     "USER": "ferre_admin",
+    #     "PASSWORD": "WL27yeJ2ggaxkws6",
+    #     "HOST": "ANDRES\SQLEXPRESS",
+    #     "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server", 
+    #     },
+    # },
+
     "default": {
-        "ENGINE": "mssql",
-        "NAME": "Ferredeposito",
-        "USER": "ferre_admin",
-        "PASSWORD": "WL27yeJ2ggaxkws6",
-        "HOST": "ANDRES\SQLEXPRESS",
-        "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server", 
-        },
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "ferredeposito",
+        "USER": "andres",
+        "PASSWORD": "This.way.up89",
+        "HOST": "localhost",
+        "PORT": "5432",
     },
 }
 

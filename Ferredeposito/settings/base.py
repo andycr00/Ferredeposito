@@ -45,7 +45,7 @@ ROOT_URLCONF = 'Ferredeposito.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR.child('templates')],
+        'DIRS': [BASE_DIR  + '/' +  'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
